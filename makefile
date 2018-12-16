@@ -29,11 +29,13 @@ FLAGS	=
 LIBS	= 
 CC	= gcc
 #
+all: $(PROGRAM)
+#
 $(PROGRAM): $(OBJECT)
 	@$(CC) $(OBJECT) -o $(PROGRAM) $(LIBS)
 #
 #	Doesn't attempt to be selective - just recompiles everything!
-$(OBJECT) : $(SOURCE)
+$(OBJECT): $(SOURCE)
 	@$(CC) $(FLAGS) -c $(SOURCE)
 #
 # Clean up any object files.
