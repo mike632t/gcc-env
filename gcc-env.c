@@ -8,9 +8,10 @@
  * arguments, while demonstrating one technique for including optional debug
  * code that is ignored if debugging is not enabled.  This technique has the
  * advantage that it works with ANSI C compilers and that it can also be put
- * around blocks of code to enable/disable them as required.  The only small
- * problem is that the debug code is not parsed by the compiler if it is not
- * enabled, which can be a problem when maintaining code.
+ * around  blocks of code to enable/disable them as required and because the
+ * code  is parsed by the compiler any isues with the code will  highlighted
+ * when it is compiled.  The only downside it that this method relies on the
+ * optimizer to remove any redundent blocks of code.
  *
  * This  program is free software: you can redistribute it and/or modify  it
  * under  the  terms of the GNU General Public License as published  by  the
@@ -35,22 +36,43 @@
 #include <stdlib.h>
 
 /* Execute code if DEBUG is True */
-#define debug(code) do {if(DEBUG){code;}} while(0)
+#ifndef debug /* Don't redefine macro if already defined. */
+   #define debug(code) do {if(DEBUG){code;}} while(0)
+#endif
 
-/* Print to stderr with additional debug information if DEBUG is True */
-#define print(_fmt, ...) do \
-   { \
+/* Print a message to stderr if DEBUG is True */
+#ifndef print /* Don't redefine macro if already defined. */
+   #define print(_fmt, ...) do { \
       if(DEBUG){ \
-         fprintf(stderr,   "Debug   : %s line : %d (%s) : " _fmt "\n", \
+         fprintf(stderr,   "Debug\t: %s line : %d (%s) : " _fmt "\n", \
             __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
       } \
    } while(0)
+#endif
+
+/* Print warning to stderr if DEBUG is True */
+#ifndef warning /* Don't redefine macro if already defined. */
+   #define warning(_fmt, ...) do { \
+      if(DEBUG){ \
+         fprintf(stderr,   "Warning\t: %s line : %d (%s) : " _fmt "\n", \
+            __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+      } \
+   } while(0)
+#endif
+
+/* Print an error message stderr and exit */
+#ifndef error /* Don't redefine macro if already defined. */
+   #define error(_fmt, ...) do { \
+      fprintf(stderr,   "Error\t: %s line : %d (%s) : " _fmt "\n", \
+         __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+      exit (1); \
+   } while(0)
+#endif
 
 #define DEBUG 1 /* Enable debugging*/
 
 int main(int argc, char **argv, char **envp){
    register char **pointer; /* Used as a pointer to the string arrays */
-   register int count; 
    int status = 0;
   
    /* Print out the argument list using the number of arguments in argc */
@@ -75,7 +97,7 @@ int main(int argc, char **argv, char **envp){
    #undef DEBUG /* Redefine DEBUG to enable debugging */
    #define DEBUG 1
 
-   if(status)fprintf(stderr, "Error\n"); else print("Status\t: %d", status);
+   if(status) error("Error"); else print("Status\t: %d", status);
   
    exit(status);
 }
