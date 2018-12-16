@@ -34,7 +34,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* Execute code if DEBUG is True */
 #define debug(code) do {if(DEBUG){code;}} while(0)
+
+/* Print to stderr with additional debug information if DEBUG is True */
 #define print(_fmt, ...) do \
    { \
       if(DEBUG){ \
@@ -59,8 +62,8 @@ int main(int argc, char **argv, char **envp){
       if(argc >1)fprintf(stderr, " "); else fprintf(stderr, "\n");
    });
   
-   #undef DEBUG
-   #define DEBUG 0 /* Disable debugging */
+   #undef DEBUG  /* Redefine DEBUG to disable debugging */
+   #define DEBUG 0
   
    /* Print the current environment vairables
     * Note - The environment table is terminated by a NULL entry, so we just
@@ -69,8 +72,8 @@ int main(int argc, char **argv, char **envp){
       debug(fprintf(stderr, "%s\n", *pointer)); /* Use debug inside loop */
    }
   
-   #undef DEBUG
-   #define DEBUG 1 /* Enable debugging */
+   #undef DEBUG /* Redefine DEBUG to enable debugging */
+   #define DEBUG 1
 
    if(status)fprintf(stderr, "Error\n"); else print("Status\t: %d", status);
   
