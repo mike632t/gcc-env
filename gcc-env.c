@@ -34,8 +34,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define debug(code)do {if(DEBUG){code;}} while(0)
-  
+#define debug(code) do {if(DEBUG){code;}} while(0)
+#define print(_fmt, ...) do \
+   { \
+      if(DEBUG){ \
+         fprintf(stderr,   "Debug   : %s line : %d (%s) : " _fmt "\n", \
+            __FILE__, __LINE__, __FUNCTION__, ##__VA_ARGS__); \
+      } \
+   } while(0)
+
 #define DEBUG 1 /* Enable debugging*/
 
 int main(int argc, char **argv, char **envp){
@@ -64,8 +71,8 @@ int main(int argc, char **argv, char **envp){
   
    #undef DEBUG
    #define DEBUG 1 /* Enable debugging */
-   
-   if(status)fprintf(stderr, "Error\n"); else debug(fprintf(stderr, "Status\t: %d\n", status));
+
+   if(status)fprintf(stderr, "Error\n"); else print("Status\t: %d", status);
   
    exit(status);
 }
