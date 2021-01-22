@@ -1,17 +1,11 @@
 /*
- *
  * env.c - Display environment vairables.
  *
  * Copyright(C) 2018   MEJT
  * 
- * This program optionally prints any environment vairables and command line
- * arguments, while demonstrating one technique for including optional debug
- * code that is ignored if debugging is not enabled.  This technique has the
- * advantage that it works with ANSI C compilers and that it can also be put
- * around  blocks of code to enable/disable them as required and because the
- * code  is parsed by the compiler any isues with the code will  highlighted
- * when it is compiled.  The only downside it that this method relies on the
- * optimizer to remove any redundent blocks of code.
+ * Prints the command line arguments and environment vairables if  debuging
+ * is enabled using a macro that will work GCC and older compilers that use
+ * the ANSI C standard.
  *
  * This  program is free software: you can redistribute it and/or modify  it
  * under  the  terms of the GNU General Public License as published  by  the
@@ -84,9 +78,6 @@ int main(int argc, char **argv, char **envp){
       if(argc >1)fprintf(stderr, " "); else fprintf(stderr, "\n");
    });
   
-   #undef DEBUG  /* Redefine DEBUG to disable debugging */
-   #define DEBUG 0
-  
    /* Print the current environment vairables
     * Note - The environment table is terminated by a NULL entry, so we just
     * loop while the pointer isn't a NULL */
@@ -94,10 +85,7 @@ int main(int argc, char **argv, char **envp){
       debug(fprintf(stderr, "%s\n", *pointer)); /* Use debug inside loop */
    }
   
-   #undef DEBUG /* Redefine DEBUG to enable debugging */
-   #define DEBUG 1
-
-   if(status) error("Error"); else print("Status\t: %d", status);
+   if (status) error("Error"); else print("Status\t: %d", status);
   
    exit(status);
 }
